@@ -60,6 +60,7 @@ enum menuID : uint8_t {
         MaxJerk,
         Steps,
       Advanced,
+        ViewMesh,
       Info,
     ManualMesh,
     UBL,
