@@ -2868,7 +2868,8 @@ void CrealityDWINClass::Menu_Item_Handler(uint8_t menu, uint8_t item, bool draw/
       #define MMESH_OFFSET (MMESH_NEXT + 1)
       #define MMESH_UP (MMESH_OFFSET + 1)
       #define MMESH_DOWN (MMESH_UP + 1)
-      #define MMESH_TOTAL MMESH_DOWN
+      #define MMESH_OLD (MMESH_DOWN + 1)
+      #define MMESH_TOTAL MMESH_OLD
 
       case ManualMesh:
         switch (item) {
@@ -2940,6 +2941,32 @@ void CrealityDWINClass::Menu_Item_Handler(uint8_t menu, uint8_t item, bool draw/
                 current_position.z -= 0.01f;
                 sync_plan_position();
                 Draw_Float(current_position.z, row-2, false, 100);
+              }
+            }
+            break;
+          case MMESH_OLD:
+            if (ExtUI::getMeshValid()) {
+              uint8 old_x, old_y;
+              // 0,0 -> 1,0 -> 2,0 -> 2,1 -> 1,1 -> 0,1 -> 0,2 -> 1,2 -> 2,2
+              old_y = (gridpoint - 1) / GRID_MAX_POINTS_Y;
+              old_x = (gridpoint - 1) % GRID_MAX_POINTS_X;
+
+              if (old_y % 2 == 1) {
+                old_x = GRID_MAX_POINTS_X - 1 - old_x;
+              }
+
+              const xy_uint8_t mesh_pos { old_x, old_y };
+              const float currval = ExtUI::getMeshPoint(mesh_pos);
+
+              if (draw) {
+                Draw_Menu_Item(row, ICON_Zoffset, (char*)"Old Z Position");
+                Draw_Float(currval, row, false, 100);
+              } else {
+                current_position.z = currval;
+                planner.synchronize();
+                planner.buffer_line(current_position, homing_feedrate(Z_AXIS), active_extruder);
+                planner.synchronize();
+                Draw_Float(current_position.z, MMESH_OFFSET, false, 100);
               }
             }
             break;
