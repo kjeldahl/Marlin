@@ -73,7 +73,7 @@
   #include "../../libs/vector_3.h"
 #endif
 
-#if ENABLED(HAS_BED_PROBE)
+#if ANY(HAS_BED_PROBE, PROBE_MANUALLY)
   #include "../../module/probe.h"
 #endif
 
