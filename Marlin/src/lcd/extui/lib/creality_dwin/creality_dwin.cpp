@@ -72,7 +72,6 @@
   #include "../../libs/least_squares_fit.h"
   #include "../../libs/vector_3.h"
 #endif
-
 #if ENABLED(HAS_BED_PROBE)
   #include "../../module/probe.h"
 #endif
@@ -89,7 +88,7 @@
 
 #define CORP_WEBSITE_E "github.com/Jyers"
 
-#define BUILD_NUMBER "1.2.1"
+#define BUILD_NUMBER "1.2.2"
 
 #define DWIN_FONT_MENU font8x16
 #define DWIN_FONT_STAT font10x20
@@ -191,11 +190,11 @@ CrealityDWINClass CrealityDWIN;
     void manual_move() {
       CrealityDWIN.Popup_Handler(MoveWait);
       char buf[20];
-      sprintf(buf, "G0 Z%.3f", (!goto_mesh_value ? Z_CLEARANCE_BETWEEN_PROBES : (mesh_goto_zhop ? 1. : 0.)));
+      sprintf(buf, "G0 F300 Z%.3f", (!goto_mesh_value ? Z_CLEARANCE_BETWEEN_PROBES : (mesh_goto_zhop ? 1. : 0.)));
       gcode.process_subcommands_now_P(buf);
-      sprintf(buf, "G42 I%i J%i", mesh_x, mesh_y);
+      sprintf(buf, "G42 F4000 I%i J%i", mesh_x, mesh_y);
       gcode.process_subcommands_now_P(buf);
-      sprintf(buf, "G0 Z%.3f", goto_mesh_value ? .0 : Z_CLEARANCE_BETWEEN_PROBES);
+      sprintf(buf, "G0 F300 Z%.3f", goto_mesh_value ? .0 : Z_CLEARANCE_BETWEEN_PROBES);
       gcode.process_subcommands_now_P(buf);
       planner.synchronize();
       CrealityDWIN.Redraw_Menu();
@@ -1142,7 +1141,7 @@ void CrealityDWINClass::Menu_Item_Handler(uint8_t menu, uint8_t item, bool draw/
           }
           else {
             Popup_Handler(MoveWait);
-            gcode.process_subcommands_now_P(PSTR("G0 F4000\nG0 Z10\nG0 X32.5 Y32.5\nG0 F300 Z0\nM220 S100"));
+            gcode.process_subcommands_now_P(PSTR("G0 F4000\nG0 Z10\nG0 X32.5 Y32.5\nG0 F300 Z0"));
             planner.synchronize();
             Redraw_Menu();
           }
@@ -1153,7 +1152,7 @@ void CrealityDWINClass::Menu_Item_Handler(uint8_t menu, uint8_t item, bool draw/
           }
           else {
             Popup_Handler(MoveWait);
-            gcode.process_subcommands_now_P(PSTR("G0 F4000\nG0 Z10\nG0 X32.5 Y197.5\nG0 F300 Z0\nM220 S100"));
+            gcode.process_subcommands_now_P(PSTR("G0 F4000\nG0 Z10\nG0 X32.5 Y197.5\nG0 F300 Z0"));
             planner.synchronize();
             Redraw_Menu();
           }
@@ -1164,7 +1163,7 @@ void CrealityDWINClass::Menu_Item_Handler(uint8_t menu, uint8_t item, bool draw/
           }
           else {
             Popup_Handler(MoveWait);
-            gcode.process_subcommands_now_P(PSTR("G0 F4000\nG0 Z10\nG0 X197.5 Y197.5\nG0 F300 Z0\nM220 S100"));
+            gcode.process_subcommands_now_P(PSTR("G0 F4000\nG0 Z10\nG0 X197.5 Y197.5\nG0 F300 Z0"));
             planner.synchronize();
             Redraw_Menu();
           }
@@ -1175,7 +1174,7 @@ void CrealityDWINClass::Menu_Item_Handler(uint8_t menu, uint8_t item, bool draw/
           }
           else {
             Popup_Handler(MoveWait);
-            gcode.process_subcommands_now_P(PSTR("G0 F4000\nG0 Z10\nG0 X197.5 Y32.5\nG0 F300 Z0\nM220 S100"));
+            gcode.process_subcommands_now_P(PSTR("G0 F4000\nG0 Z10\nG0 X197.5 Y32.5\nG0 F300 Z0"));
             planner.synchronize();
             Redraw_Menu();
           }
@@ -1186,7 +1185,7 @@ void CrealityDWINClass::Menu_Item_Handler(uint8_t menu, uint8_t item, bool draw/
           }
           else {
             Popup_Handler(MoveWait);
-            gcode.process_subcommands_now_P(PSTR("G0 F4000\nG0 Z10\nG0 X117.5 Y117.5\nG0 F300 Z0\nM220 S100"));
+            gcode.process_subcommands_now_P(PSTR("G0 F4000\nG0 Z10\nG0 X117.5 Y117.5\nG0 F300 Z0"));
             planner.synchronize();
             Redraw_Menu();
           }
@@ -1226,12 +1225,12 @@ void CrealityDWINClass::Menu_Item_Handler(uint8_t menu, uint8_t item, bool draw/
               #if ENABLED(Z_SAFE_HOMING)
                 planner.synchronize();
                 char buf[20];
-                sprintf(buf, "G0 X%i Y%i", Z_SAFE_HOMING_X_POINT, Z_SAFE_HOMING_Y_POINT);
+                sprintf(buf, "G0 F4000 X%i Y%i", Z_SAFE_HOMING_X_POINT, Z_SAFE_HOMING_Y_POINT);
                 gcode.process_subcommands_now_P(buf);
               #else
-                gcode.process_subcommands_now_P(PSTR("G0 X117.5 Y117.5"));
+                gcode.process_subcommands_now_P(PSTR("G0 F4000 X117.5 Y117.5"));
               #endif
-              gcode.process_subcommands_now_P(PSTR("G0 Z0"));
+              gcode.process_subcommands_now_P(PSTR("G0 F300 Z0"));
               planner.synchronize();
               Redraw_Menu();
             }
@@ -1251,12 +1250,12 @@ void CrealityDWINClass::Menu_Item_Handler(uint8_t menu, uint8_t item, bool draw/
                 #if ENABLED(Z_SAFE_HOMING)
                   planner.synchronize();
                   char buf[20];
-                  sprintf(buf, "G0 X%i Y%i", Z_SAFE_HOMING_X_POINT, Z_SAFE_HOMING_Y_POINT);
+                  sprintf(buf, "G0 F4000 X%i Y%i", Z_SAFE_HOMING_X_POINT, Z_SAFE_HOMING_Y_POINT);
                   gcode.process_subcommands_now_P(buf);
                 #else
-                  gcode.process_subcommands_now_P(PSTR("G0 X117.5 Y117.5"));
+                  gcode.process_subcommands_now_P(PSTR("G0 F4000 X117.5 Y117.5"));
                 #endif
-                gcode.process_subcommands_now_P(PSTR("G0 Z0"));
+                gcode.process_subcommands_now_P(PSTR("G0 F300 Z0"));
                 planner.synchronize();
                 Redraw_Menu();
               }
@@ -1591,7 +1590,8 @@ void CrealityDWINClass::Menu_Item_Handler(uint8_t menu, uint8_t item, bool draw/
       #define TEMP_HOTEND (TEMP_BACK + ENABLED(HAS_HOTEND))
       #define TEMP_BED (TEMP_HOTEND + ENABLED(HAS_HEATED_BED))
       #define TEMP_FAN (TEMP_BED + ENABLED(HAS_FAN))
-      #define TEMP_PREHEAT1 (TEMP_FAN + (PREHEAT_COUNT >= 1))
+      #define TEMP_PID (TEMP_FAN + ANY(HAS_HOTEND, HAS_HEATED_BED))
+      #define TEMP_PREHEAT1 (TEMP_PID + (PREHEAT_COUNT >= 1))
       #define TEMP_PREHEAT2 (TEMP_PREHEAT1 + (PREHEAT_COUNT >= 2))
       #define TEMP_PREHEAT3 (TEMP_PREHEAT2 + (PREHEAT_COUNT >= 3))
       #define TEMP_PREHEAT4 (TEMP_PREHEAT3 + (PREHEAT_COUNT >= 4))
@@ -1637,6 +1637,16 @@ void CrealityDWINClass::Menu_Item_Handler(uint8_t menu, uint8_t item, bool draw/
             }
             else {
               Modify_Value(thermalManager.fan_speed[0], MIN_FAN_SPEED, MAX_FAN_SPEED, 1);
+            }
+            break;
+        #endif
+        #if ANY(HAS_HOTEND, HAS_HEATED_BED)
+          case TEMP_PID:
+            if (draw) {
+              Draw_Menu_Item(row, ICON_Step, (char*)"PID Autotune", NULL, true);
+            }
+            else {
+              Draw_Menu(PID);
             }
             break;
         #endif
@@ -1692,6 +1702,88 @@ void CrealityDWINClass::Menu_Item_Handler(uint8_t menu, uint8_t item, bool draw/
         #endif
       }
       break;
+    #if ANY(HAS_HOTEND, HAS_HEATED_BED)
+      case PID:
+
+        #define PID_BACK 0
+        #define PID_HOTEND (PID_BACK + ENABLED(HAS_HOTEND))
+        #define PID_BED (PID_HOTEND + ENABLED(HAS_HEATED_BED))
+        #define PID_E_TEMP (PID_BED + ENABLED(HAS_HOTEND))
+        #define PID_BED_TEMP (PID_E_TEMP + ENABLED(HAS_HEATED_BED))
+        #define PID_CYCLES (PID_BED_TEMP + 1)
+        #define PID_TOTAL PID_CYCLES
+
+        static uint16_t PID_e_temp = 180;
+        static uint16_t PID_bed_temp = 50;
+        static uint8_t PID_cycles = 5;
+
+        switch (item) {
+          case PID_BACK:
+            if (draw) {
+              Draw_Menu_Item(row, ICON_Back, (char*)"Back");
+            }
+            else {
+              Draw_Menu(TempMenu, TEMP_PID);
+            }
+            break;
+          #if HAS_HOTEND
+            case PID_HOTEND:
+              if (draw) {
+                Draw_Menu_Item(row, ICON_SetEndTemp, (char*)"Hotend");
+              }
+              else {
+                char buf[30];
+                sprintf(buf, "M303 E0 C%i S%i", PID_cycles, PID_e_temp);
+                gcode.process_subcommands_now_P(buf);
+              }
+              break;
+          #endif
+          #if HAS_HEATED_BED
+            case PID_BED:
+              if (draw) {
+                Draw_Menu_Item(row, ICON_SetBedTemp, (char*)"Bed");
+              }
+              else {
+                char buf[30];
+                sprintf(buf, "M303 E-1 C%i S%i", PID_cycles, PID_bed_temp);
+                gcode.process_subcommands_now_P(buf);
+              }
+              break;
+          #endif
+          #if HAS_HOTEND
+            case PID_E_TEMP:
+              if (draw) {
+                Draw_Menu_Item(row, ICON_FanSpeed, (char*)"Hotend Temp");
+                Draw_Float(PID_e_temp, row, false, 1);
+              }
+              else {
+                Modify_Value(PID_e_temp, MIN_E_TEMP, MAX_E_TEMP, 1);
+              }
+              break;
+          #endif
+          #if HAS_HEATED_BED
+            case PID_BED_TEMP:
+              if (draw) {
+                Draw_Menu_Item(row, ICON_FanSpeed, (char*)"Bed Temp");
+                Draw_Float(PID_bed_temp, row, false, 1);
+              }
+              else {
+                Modify_Value(PID_bed_temp, MIN_BED_TEMP, MAX_BED_TEMP, 1);
+              }
+              break;
+          #endif
+          case PID_CYCLES:
+            if (draw) {
+              Draw_Menu_Item(row, ICON_FanSpeed, (char*)"Cycles");
+              Draw_Float(PID_cycles, row, false, 1);
+            }
+            else {
+              Modify_Value(PID_cycles, 3, 50, 1);
+            }
+            break;
+        }
+        break;
+    #endif
     #if (PREHEAT_COUNT >= 1)
       case Preheat1:
 
@@ -2502,6 +2594,13 @@ void CrealityDWINClass::Menu_Item_Handler(uint8_t menu, uint8_t item, bool draw/
                   Popup_Handler(Home);
                   gcode.home_all_axes(true);
                 }
+                #if ENABLED(PREHEAT_BEFORE_LEVELING)
+                  Popup_Handler(Heating);
+                  thermalManager.setTargetHotend(LEVELING_NOZZLE_TEMP, 0);
+                  thermalManager.setTargetBed(LEVELING_BED_TEMP);
+                  thermalManager.wait_for_hotend(0);
+                  thermalManager.wait_for_bed_heating();
+                #endif
                 Popup_Handler(Level);
                 gcode.process_subcommands_now_P(PSTR("G29 P0\nG29 P1"));
                 gcode.process_subcommands_now_P(PSTR("G29 P3\nG29 P3\nG29 P3\nG29 P3\nG29 P3\nG29 P3\nG29 P3\nG29 P3\nG29 P3\nG29 P3\nG29 P3\nG29 P3\nG29 P3\nG29 P3\nG29 P3\nM420 S1"));
@@ -2520,6 +2619,13 @@ void CrealityDWINClass::Menu_Item_Handler(uint8_t menu, uint8_t item, bool draw/
                 Popup_Handler(Home);
                 gcode.home_all_axes(true);
               }
+              #if ENABLED(PREHEAT_BEFORE_LEVELING)
+                Popup_Handler(Heating);
+                thermalManager.setTargetHotend(LEVELING_NOZZLE_TEMP, 0);
+                thermalManager.setTargetBed(LEVELING_BED_TEMP);
+                thermalManager.wait_for_hotend(0);
+                thermalManager.wait_for_bed_heating();
+              #endif
               ubl_conf.mesh_step_warning = false;
               ubl_conf.manual_move();
               Draw_Menu(UBLManual);
@@ -3052,7 +3158,6 @@ void CrealityDWINClass::Menu_Item_Handler(uint8_t menu, uint8_t item, bool draw/
           case TUNE_ZOFFSET:
             if (draw) {
               Draw_Menu_Item(row, ICON_FanSpeed, (char*)"Z-Offset");
-              // TODO this does not update when using Up/Down below
               Draw_Float(zoffsetvalue, row, false, 100);
             }
             else {
@@ -3273,6 +3378,10 @@ char* CrealityDWINClass::Get_Menu_Title(uint8_t menu) {
       return (char*)"Control";
     case TempMenu:
       return (char*)"Temperature";
+    #if ANY(HAS_HOTEND, HAS_HEATED_BED)
+      case PID:
+        return (char*)"PID Autotune";
+    #endif
     #if (PREHEAT_COUNT >= 1)
       case Preheat1:
         return (char*)(PREHEAT_1_LABEL " Settings");
@@ -3359,6 +3468,10 @@ int CrealityDWINClass::Get_Menu_Size(uint8_t menu) {
       return CONTROL_TOTAL;
     case TempMenu:
       return TEMP_TOTAL;
+    #if ANY(HAS_HOTEND, HAS_HEATED_BED)
+      case PID:
+        return PID_TOTAL;
+    #endif
     #if (PREHEAT_COUNT >= 1)
       case Preheat1:
         return PREHEAT1_TOTAL;
