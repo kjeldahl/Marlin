@@ -2366,7 +2366,7 @@ void CrealityDWINClass::Menu_Item_Handler(uint8_t menu, uint8_t item, bool draw/
       #define ADVANCED_FILSENSORDISTANCE (ADVANCED_FILSENSORENABLED + ENABLED(HAS_FILAMENT_RUNOUT_DISTANCE))
       #define ADVANCED_POWER_LOSS (ADVANCED_FILSENSORDISTANCE + ENABLED(POWER_LOSS_RECOVERY))
       #define ADVANCED_TIME_FORMAT (ADVANCED_POWER_LOSS + 1)
-      #define ADVANCED_MESH (ADVANCED_TIME_FORMAT + ENABLED(HAS_MESH))
+      #define ADVANCED_MESH (ADVANCED_TIME_FORMAT + ENABLED(PLANNER_LEVELING))
       #define ADVANCED_TOTAL ADVANCED_MESH
 
       switch (item) {
@@ -2475,7 +2475,7 @@ void CrealityDWINClass::Menu_Item_Handler(uint8_t menu, uint8_t item, bool draw/
             Draw_Checkbox(row, eeprom_settings.time_format_textual);
           }
           break;
-        #if HAS_MESH
+        #if PLANNER_LEVELING
           case ADVANCED_MESH:
             if (draw) {
               Draw_Menu_Item(row, ICON_Mesh, (char*)"View Mesh");
@@ -2487,12 +2487,11 @@ void CrealityDWINClass::Menu_Item_Handler(uint8_t menu, uint8_t item, bool draw/
         #endif
       }
       break;
-    #if HAS_MESH
+    #if PLANNER_LEVELING
       case ViewMesh:
 
         #define VIEW_MESH_BACK 0
         #define VIEW_MESH_ROW (VIEW_MESH_BACK + 1)
-        #define VIEW_MESH_NO_MESH (VIEW_MESH_BACK + 1)
         #define VIEW_MESH_TOTAL VIEW_MESH_BACK // The individual items cannot be selected
 
         switch (item) {
@@ -2514,10 +2513,10 @@ void CrealityDWINClass::Menu_Item_Handler(uint8_t menu, uint8_t item, bool draw/
                     }
                     pos1 += sprintf(pos1, "%.2f", currval);
                   }
-                  Draw_Menu_Item(VIEW_MESH_ROW + GRID_MAX_POINTS_Y - 1 - grid_y, ICON_Mesh, row1, NULL, false, true);
+                  Draw_Menu_Item(VIEW_MESH_ROW + GRID_MAX_POINTS_Y - 1 - grid_y, 0, row1, NULL, false, true);
                 }
               } else {
-                Draw_Menu_Item(VIEW_MESH_NO_MESH, ICON_Mesh, (char*)"A mesh has not been stored.", NULL, false, true);
+                Draw_Menu_Item(VIEW_MESH_ROW, 0, (char*)"A mesh has not been stored.", NULL, false, true);
               }
             }
             else {
@@ -3443,7 +3442,7 @@ char* CrealityDWINClass::Get_Menu_Title(uint8_t menu) {
       return (char*)"Steps/mm";
     case Advanced:
       return (char*)"Advanced Settings";
-    #if HAS_MESH
+    #if PLANNER_LEVELING
       case ViewMesh:
         return (char*)"View Mesh";
     #endif
@@ -3537,7 +3536,7 @@ int CrealityDWINClass::Get_Menu_Size(uint8_t menu) {
       return STEPS_TOTAL;
     case Advanced:
       return ADVANCED_TOTAL;
-    #if HAS_MESH
+    #if PLANNER_LEVELING
       case ViewMesh:
         return VIEW_MESH_TOTAL;
     #endif
